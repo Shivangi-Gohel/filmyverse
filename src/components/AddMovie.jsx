@@ -24,6 +24,12 @@ const AddMovie = () => {
       timer: 3000
     })
     setLoading(false);
+    setForm({
+      title: "",
+      year: "",
+      description: "",
+      image: ""
+    })
   }
 
   return (
