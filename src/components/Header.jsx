@@ -1,16 +1,92 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { AppState } from './Layout';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/authContext';
+import { getAuth } from 'firebase/auth';
+import Login from './Login';
 
-const Header = () => {
-  const {currentUser} = useAuth()
+function Header() {
+  const navigate = useNavigate();
+  const useAppState = useContext(AppState);
+
+  const handleLogout = async () => {
+    const handleLogout = async () => {
+      try {
+        const auth = getAuth();
+        await signOut(auth); // Sign out from Firebase
+        useAppState.setLogin(false); // Update context state
+        useAppState.setUsername(""); // Clear username state
+        console.log("User has logged out.");
+
+        swal({
+          title: "Logged out Successfully",
+          icon: 'success',
+          buttons: {
+            confirm: {
+              text: 'Okay',
+              className: 'bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded',
+            }
+          }
+        });
+      } catch (error) {
+        console.error("Logout Error: ", error);
+        swal({
+          title: 'Logout Failed!',
+          text: error.message || "An error occurred while logging out.",
+          icon: 'error',
+          buttons: {
+            confirm: {
+              text: 'Try Again',
+              className: 'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded',
+            }
+          }
+        });
+      }
+    };
+  }
+
   return (
-    <div className='sticky top-0 z-10 bg-black header text-3xl flex justify-between text-red-500 font-bold p-3 border-b-2 border-gray-500'>
-      <Link to={'/'}><span>Filmy<span className='text-white'>Verse</span></span></Link>
-      {/* <div>{currentUser.displayName}</div> */}
-      <Link to={'/addmovie'}><Button><h1 className='text-lg text-white cursor-pointer flex items-center'><AddIcon className='mr-1'/>Add New</h1></Button></Link>
+    <div className="sticky top-0 z-40 flex border-b-2 text-3xl text-[#EAEAEA] font-bold justify-between p-3 bg-[#121212] border-[#333333] shadow-xl">
+      <div className="hover:scale-105 transition-all duration-200">
+        <span
+          className="transition-all duration-300 cursor-pointer"
+          onClick={() => navigate('/')}
+        >
+          Movie
+          <span className="transition-all duration-300 text-[#EAEAEA] cursor-pointer" onClick={() => navigate('/')}>
+            Verse
+          </span>
+        </span>
+      </div>
+
+      {useAppState.login ? (
+        <div className="flex">
+          <Link
+            to="/add-movie"
+            className="transition-all duration-300 inline-flex items-center gap-2 rounded bg-white text-black px-8 max-sm:px-2 py-2 hover:bg-gray-400"
+          >
+            <span className="text-base max-sm:hidden font-medium bg-transparent">Add new</span>
+            <AddIcon className="bg-transparent" />
+          </Link>
+          <div
+            onClick={handleLogout}
+            className="ml-2 transition-all duration-300 inline-flex items-center gap-2 rounded  bg-white px-8 max-sm:px-2 py-2 text-black hover:bg-gray-400 "
+          >
+            <span className="text-base max-sm:text-xs py-1 mt-0 font-medium bg-transparent">Log Out</span>
+          </div>
+        </div>
+      ) : (
+        <div className="mr-3">
+          <Link
+            to="/login"
+            className="transition-all duration-300 inline-flex items-center gap-2 rounded bg-white px-8 max-sm:px-2 py-2 text-black hover:bg-gray-400"
+          >
+            <span className="text-base font-medium bg-transparent">Login</span>
+          </Link>
+        </div>
+      )}
     </div>
   )
 }
