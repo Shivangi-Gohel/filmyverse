@@ -22,16 +22,16 @@ const Reviews = ({ id, prevRating, userRated }) => {
                 thought: form,
                 timestamp: new Date().getTime()
             })
+            const _doc = doc(db, "movies", id);
+            await updateDoc(_doc, {
+                rating: prevRating + rating,
+                rated: userRated + 1
+            })
             swal({
                 title: "Review Sent",
                 icon: "success",
                 button: false,
                 timer: 3000
-            })
-            const doc = doc(db, "movies", id);
-            await updateDoc(ref, {
-                rating: prevRating + rating,
-                rated: userRated + 1
             })
             setRating(0);
             setForm("");
@@ -59,7 +59,7 @@ const Reviews = ({ id, prevRating, userRated }) => {
             setReviewsLoading(false);
         }
         getData();
-    }, [])
+    }, [id])
 
     return (
         <div className='mt-4 border-t-2 border-gray-700 w-full'>
