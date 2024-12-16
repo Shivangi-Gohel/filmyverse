@@ -3,24 +3,35 @@ import Cards from './components/Cards';
 import AddMovie from './components/AddMovie';
 import { Route, Routes } from 'react-router-dom';
 import Detail from './components/Detail';
-import Login from './components/Login';
 import { AuthProvider } from './contexts/authContext';
+import { createContext, useState, useEffect } from 'react';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const Appstate = createContext();
 
 function App() {
+  const [login, setLogin] = useState(false);
+  const [userName, setUserName] = useState("");
 
   return (
-    <div className='App relative'>
-      <AuthProvider>
+    <Appstate.Provider value={{login, userName, setLogin, setUserName}}>
+      <div className='App relative'>
         <Header/>
         <Routes>
           <Route path="/" element={<Cards/>} />
           <Route path="/addmovie" element={<AddMovie/>} />
           <Route path="/detail/:id" element={<Detail/>} />
           <Route path="/login" element={<Login/>} />
+          <Route path="/signup" element={<Signup/>} />
         </Routes>
-      </AuthProvider>
-    </div>
+        <ToastContainer/>
+      </div>
+    </Appstate.Provider>
   );
 }
 
 export default App
+export {Appstate}

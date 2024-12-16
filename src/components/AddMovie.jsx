@@ -5,6 +5,16 @@ import {moviesRef} from '../firebase/firebase'
 import swal from 'sweetalert'
 
 const AddMovie = () => {
+
+  const navigate = useNavigate();
+    const useAppState = useContext(AppState);
+
+    useEffect(() => {
+        if (!useAppState.login) {
+            navigate('/login')
+        }
+    }, [])
+
   const [form, setForm] = useState({
     title: "",
     year: "",
@@ -16,29 +26,87 @@ const AddMovie = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const addMovie = async () => {
+  // const addMovie = async () => {
+  //   setLoading(true);
+  //   await addDoc(moviesRef, form);
+  //   swal({
+  //     title: "Successfully Added",
+  //     icon: "success",
+  //     button: false,
+  //     timer: 3000
+  //   })
+  //   setLoading(false);
+  //   setForm({
+  //     title: "",
+  //     year: "",
+  //     description: "",
+  //     image: ""
+  //   })
+  // }
+
+  async function addMovie(event) {
+    event.preventDefault();
+    console.log('add movie called');
     setLoading(true);
-    await addDoc(moviesRef, form);
-    swal({
-      title: "Successfully Added",
-      icon: "success",
-      button: false,
-      timer: 3000
-    })
+    try {
+        const res = await addDoc(moviesRef, {
+            description: form.description,
+            img: form.img,
+            name: form.name,
+            year: form.year,
+            rated: 0,
+            rating: 0
+        });
+        console.log(res);
+        setForm({
+            description: "",
+            img: "",
+            name: "",
+            year: "",
+        });
+        swal({
+            title: `${form.name} Movie Added`,
+            text: 'Your movie has been successfully added!',
+            icon: 'success',
+            buttons: {
+                confirm: {
+                    text: 'Okay',
+                    value: true,
+                    visible: true,
+                    className: 'bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded',
+                    closeModal: true,
+                }
+            },
+        }).then((value) => {
+            if (value) {
+                navigate('/');
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        swal({
+            title: 'Error!',
+            text: error.message || "Error adding movie",
+            icon: 'error',
+            buttons: {
+                confirm: {
+                    text: 'Try Again',
+                    value: true,
+                    visible: true,
+                    className: 'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded',
+                    closeModal: true,
+                }
+            }
+        });
+    }
     setLoading(false);
-    setForm({
-      title: "",
-      year: "",
-      description: "",
-      image: ""
-    })
-  }
+}
 
   return (
     <div>
       <section class="text-gray-600 body-font relative">
         <div class="container px-5 py-8 mx-auto">
-          <div class="flex flex-col text-center w-full mb-">
+          <div class="flex flex-col text-center w-full mb-3">
             <h1 class="sm:text-3xl text-xl font-medium title-font mb-4 text-white">Add Movie</h1>
           </div>
           <div class="lg:w-1/2 md:w-2/3 mx-auto">

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-// import { Header, Footer } from './index.js';
+import Header from './Header.jsx';
 import { Outlet } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../firebase/firebase.jsx';
@@ -7,7 +7,7 @@ import { AuthProvider } from '../contexts/authContext/index.jsx';
 
 const AppState = createContext();
 
-function Layout() {
+function Layout({ children }) {
     const [login, setLogin] = useState(false);
     const [username, setUsername] = useState("");
     const [user, setUser] = useState(null);

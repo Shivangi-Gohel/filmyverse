@@ -4,28 +4,39 @@ import ReactStars from 'react-stars';
 import {doc, getDocs, addDoc } from 'firebase/firestore';
 import { moviesRef } from '../firebase/firebase';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Cards = ({id}) => {
     const [data, setData] = useState([]);
-    const [loader, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function getData() {
-            setLoading(true)
-            const _data = await getDocs(moviesRef);
-            _data.forEach((doc) => {
-                setData((prv) => [...prv, { ...(doc.data()), id: doc.id }])
-            })
-            setLoading(false)
+            setLoading(true);
+            try {
+                const querySnapshot = await getDocs(moviesRef);
+                const _data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setData(_data);
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+            } finally {
+                setLoading(false);
+            }
         }
         getData();
     }, [])
 
     return (
         <div className='flex flex-wrap justify-between px-3 mt-2'>
-            {loader ? <div className='w-full flex justify-center items-center h-96'><ThreeDots height={40} color='white' /></div> :
-                data.map((e, i) => {
-                    return (
+            {loading ? (
+                <div className='w-[100vw] h-[80vh] flex justify-center items-center'>
+                <ThreeDots color='white' width={385} strokeWidth={2} height={20} />
+            </div>
+            ) : (
+                <>
+                {data.map((e, i) => {
+                    return(
                         <Link to={`/detail/${e.id}`}>
                             <div key={i} className='card shadow-lg p-2 rounded-lg hover:-translate-y-2 cursor-pointer font-medium mt-6 mr-4 transition-all duration-500'>
                                 <img className='h-60 md:h-72 object-cover w-full' src={e.image} />
@@ -40,11 +51,11 @@ const Cards = ({id}) => {
                             </div>
                         </Link>
                     )
-                })
-            }
+                })}
+                </>
+            )}
         </div>
-
-    )
+    );
 }
 
 export default Cards

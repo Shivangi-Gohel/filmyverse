@@ -1,66 +1,56 @@
 import React, { useContext } from 'react'
 import AddIcon from '@mui/icons-material/Add';
-import { Button } from '@mui/material';
-import { AppState } from './Layout';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/authContext';
-import { getAuth } from 'firebase/auth';
-import Login from './Login';
-
-function Header() {
+import { Link } from 'react-router-dom';
+import { AppState } from '../components/Layout';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, signOut } from 'firebase/auth';
+const Header = () => {
+  const useAppState = useContext(Appstate);
   const navigate = useNavigate();
-  const useAppState = useContext(AppState);
 
   const handleLogout = async () => {
-    const handleLogout = async () => {
-      try {
-        const auth = getAuth();
-        await signOut(auth); // Sign out from Firebase
-        useAppState.setLogin(false); // Update context state
-        useAppState.setUsername(""); // Clear username state
-        console.log("User has logged out.");
+    try {
+      const auth = getAuth();
+      await signOut(auth); // Sign out from Firebase
+      useAppState.setLogin(false); // Update context state
+      useAppState.setUsername(""); // Clear username state
+      console.log("User has logged out.");
 
-        swal({
-          title: "Logged out Successfully",
-          icon: 'success',
-          buttons: {
-            confirm: {
-              text: 'Okay',
-              className: 'bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded',
-            }
+      swal({
+        title: "Logged out Successfully",
+        icon: 'success',
+        buttons: {
+          confirm: {
+            text: 'Okay',
+            className: 'bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded',
           }
-        });
-      } catch (error) {
-        console.error("Logout Error: ", error);
-        swal({
-          title: 'Logout Failed!',
-          text: error.message || "An error occurred while logging out.",
-          icon: 'error',
-          buttons: {
-            confirm: {
-              text: 'Try Again',
-              className: 'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded',
-            }
+        }
+      });
+    } catch (error) {
+      console.error("Logout Error: ", error);
+      swal({
+        title: 'Logout Failed!',
+        text: error.message || "An error occurred while logging out.",
+        icon: 'error',
+        buttons: {
+          confirm: {
+            text: 'Try Again',
+            className: 'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded',
           }
-        });
-      }
-    };
-  }
+        }
+      });
+    }
+  };
+
 
   return (
-    <div className="sticky top-0 z-40 flex border-b-2 text-3xl text-[#EAEAEA] font-bold justify-between p-3 bg-[#121212] border-[#333333] shadow-xl">
-      <div className="hover:scale-105 transition-all duration-200">
-        <span
-          className="transition-all duration-300 cursor-pointer"
-          onClick={() => navigate('/')}
-        >
-          Movie
-          <span className="transition-all duration-300 text-[#EAEAEA] cursor-pointer" onClick={() => navigate('/')}>
-            Verse
-          </span>
-        </span>
-      </div>
-
+    <div className='sticky top-0 z-10 bg-black header text-3xl flex justify-between text-red-500 font-bold p-3 border-b-2 border-gray-500'>
+      <Link to={'/'}><span>Filmy<span className='text-white'>Verse</span></span></Link>
+      {/* {useAppState.login ?
+        <Link to={'/addmovie'}><Button><h1 className='text-lg text-white cursor-pointer flex items-center'><AddIcon className='mr-1' />Add New</h1></Button></Link>
+        :
+        <Link to={'/login'}><h1 className='text-lg bg-green-500 cursor-pointer flex items-center'><Button><span className='text-white font-medium capitalize'>login</span></Button></h1></Link>
+      } */}
       {useAppState.login ? (
         <div className="flex">
           <Link
@@ -90,5 +80,4 @@ function Header() {
     </div>
   )
 }
-
 export default Header

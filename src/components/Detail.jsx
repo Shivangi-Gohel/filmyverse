@@ -30,6 +30,12 @@ const Detail = () => {
   },[])
 
   return (
+    loading ? (
+      <div className='w-[100vw] h-[80vh] flex justify-center items-center bg-[#121212]'>
+          <ThreeDots color='white' width={385} strokeWidth={2} height={20} />
+      </div>
+  ) : 
+  (
     <div className='p-4 mt-4 flex flex-col md:flex-row items-center md:items-start justify-center w-full'>
       {loading ? <div className='h-96 flex w-full justify-center items-center'><Bars height={30} color='white'/></div> :
       <>
@@ -44,6 +50,7 @@ const Detail = () => {
       </>
     }
     </div>
+  )
   )
 }
 
