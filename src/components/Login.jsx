@@ -33,6 +33,7 @@ const Login = () => {
             toast.success("User Logged in Successfully", {
                 position: "top-center"
             })
+            navigate("/")
             setLogin(true);
         } catch(err) {
             console.log(err.message);

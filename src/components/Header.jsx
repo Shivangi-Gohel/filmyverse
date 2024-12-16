@@ -1,15 +1,17 @@
 import React, { useContext } from 'react'
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
-import { AppState } from '../components/Layout';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
+import { AppState } from './Layout';
 const Header = () => {
-  const useAppState = useContext(Appstate);
+  const useAppState = useContext(AppState);
   const navigate = useNavigate();
-
   const handleLogout = async () => {
+    console.log("Hello")
     try {
+      console.log("hello")
+      console.log(useAppState);
       const auth = getAuth();
       await signOut(auth); // Sign out from Firebase
       useAppState.setLogin(false); // Update context state
@@ -51,7 +53,7 @@ const Header = () => {
         :
         <Link to={'/login'}><h1 className='text-lg bg-green-500 cursor-pointer flex items-center'><Button><span className='text-white font-medium capitalize'>login</span></Button></h1></Link>
       } */}
-      {useAppState.login ? (
+      {/* {useAppState.login ? ( */}
         <div className="flex">
           <Link
             to="/add-movie"
@@ -67,7 +69,7 @@ const Header = () => {
             <span className="text-base max-sm:text-xs py-1 mt-0 font-medium bg-transparent">Log Out</span>
           </div>
         </div>
-      ) : (
+      {/* ) : ( */}
         <div className="mr-3">
           <Link
             to="/login"
@@ -76,7 +78,8 @@ const Header = () => {
             <span className="text-base font-medium bg-transparent">Login</span>
           </Link>
         </div>
-      )}
+      {/* ) */}
+      {/* } */}
     </div>
   )
 }
